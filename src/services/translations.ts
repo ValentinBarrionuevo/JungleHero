@@ -1,6 +1,4 @@
 import { ES_AR } from "../enums/languages";
-import regeneratorRuntime from "regenerator-runtime";
-import "regenerator-runtime/runtime.js";
 
 
 
