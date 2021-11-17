@@ -4,6 +4,12 @@ import { FETCHED, FETCHING, READY, TODO } from "../enums/status";
 import { getTranslations } from "../services/translations";
 import { getPhrase } from "../services/translations";
 
+import regeneratorRuntime from "regenerator-runtime";
+import "regenerator-runtime/runtime.js";
+
+
+
+
 export class changeLang extends Phaser.Scene {
   private updatedTextInScene;
   private updatedString = "Siguiente";

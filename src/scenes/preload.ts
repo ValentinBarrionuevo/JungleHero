@@ -83,7 +83,6 @@ export class preload extends Phaser.Scene {
     this.load.image("cursor", "sprites/cursorCage.png");
     this.load.image("cageBackground", "sprites/cageBackground.png");
     this.load.image("levelBackground", "sprites/levelBackground.png");
-    this.load.image("background", "sprites/background.png");
 
     this.load.image("tile", "tilemaps/tiles/tile.png");
     this.load.tilemapTiledJSON("cageJSON", "tilemaps/json/cageMinigame.json");

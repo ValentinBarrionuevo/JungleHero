@@ -1,4 +1,8 @@
 import { ES_AR } from "../enums/languages";
+import regeneratorRuntime from "regenerator-runtime";
+import "regenerator-runtime/runtime.js";
+
+
 
 const PROJECT_ID = "ckvwx350q262831nzy616glg39";
 let translations = null;
