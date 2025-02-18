@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { getPhrase } from "../services/translations";
+import { sharedInstance as events } from "./EventCenter";
 
 export class mainMenu extends Phaser.Scene {
   private map;
@@ -15,15 +15,87 @@ export class mainMenu extends Phaser.Scene {
   private helpText;
   private creditsText;
   private langText;
+  private langSelection;
+  private textPlay;
+  private textHelp;
+  private textCredits;
+  private textLang;
+  private listened;
 
   constructor() {
     super("mainMenu");
   }
+
   create() {
+    this.listened = false;
     this.initAnimations();
     this.initMap();
     this.initCamera();
-    this.initButtons();
+    this.initListeners();
+  }
+
+  private initListeners() {
+    events.on(
+      "langEs",
+      () => {
+        if (this.listened == false) {
+          this.langSelection = "es";
+          this.initText();
+          this.initButtons();
+          this.listened = true;
+        }
+      },
+      this
+    );
+    events.on(
+      "langEn",
+      () => {
+        if (this.listened == false) {
+          this.langSelection = "en";
+          this.initText();
+          this.initButtons();
+          this.listened = true;
+        }
+      },
+      this
+    );
+    events.on(
+      "langPt",
+      () => {
+        if (this.listened == false) {
+          this.langSelection = "pt";
+          this.initText();
+          this.initButtons();
+          this.listened = true;
+        }
+      },
+      this
+    );
+  }
+
+  private initText() {
+    switch (this.langSelection) {
+      case "es":
+        this.textPlay = "Jugar";
+        this.textCredits = "Créditos";
+        this.textHelp = "Ayuda";
+        this.textLang = "Idioma";
+        break;
+
+      case "en":
+        this.textPlay = "Play";
+        this.textCredits = "Credits";
+        this.textHelp = "Help";
+        this.textLang = "Language";
+        break;
+
+      case "pt":
+        this.textPlay = "Jogar";
+        this.textCredits = "Créditos";
+        this.textHelp = "Ajuda";
+        this.textLang = "Língua";
+        break;
+    }
     this.initCredits();
   }
 
@@ -68,12 +140,14 @@ export class mainMenu extends Phaser.Scene {
       const { x = 0, y = 0, name } = objData;
       switch (name) {
         case "Jugar": {
+          console.log("Jugar");
+
           this.play = this.add
             .image(x, y, "botonOut")
             .setInteractive({ cursor: "pointer", pixelPerfect: "true" });
 
           this.playText = this.add
-            .text(x, y - 20, getPhrase("Jugar"), {
+            .text(x, y - 20, this.textPlay, {
               fontSize: "55px",
               fontFamily: "font1",
             })
@@ -88,7 +162,8 @@ export class mainMenu extends Phaser.Scene {
             this.scene.scene.time.addEvent({
               delay: 1500,
               callback: () => {
-                this.scene.stop(), this.scene.start("level-1-scene");
+                this.scene.stop();
+                this.scene.start("level-1-scene");
               },
             });
           });
@@ -108,7 +183,7 @@ export class mainMenu extends Phaser.Scene {
             .setInteractive({ cursor: "pointer", pixelPerfect: "true" });
 
           this.creditsText = this.add
-            .text(x, y - 20, getPhrase("Créditos"), {
+            .text(x, y - 20, this.textCredits, {
               fontSize: "55px",
               fontFamily: "font1",
             })
@@ -149,7 +224,7 @@ export class mainMenu extends Phaser.Scene {
             .setInteractive({ cursor: "pointer", pixelPerfect: "true" });
 
           this.helpText = this.add
-            .text(x, y - 20, getPhrase("Ayuda"), {
+            .text(x, y - 20, this.textHelp, {
               fontSize: "55px",
               fontFamily: "font1",
             })
@@ -179,7 +254,7 @@ export class mainMenu extends Phaser.Scene {
             .image(x, y, "botonOut")
             .setInteractive({ cursor: "pointer", pixelPerfect: "true" });
           this.langText = this.add
-            .text(x, y - 20, getPhrase("Lenguaje"), {
+            .text(x, y - 20, this.textLang, {
               fontSize: "55px",
               fontFamily: "font1",
             })
@@ -189,7 +264,9 @@ export class mainMenu extends Phaser.Scene {
 
           this.lang.on("pointerup", () => {
             this.scene.stop();
-            this.scene.start("changeLang");
+            this.scene.stop("langEmit");
+            this.scene.start("sceneIdioma");
+            this.scene.run("langEmit");
           });
           this.lang.on("pointerover", () => {
             this.langText.y += 10;
@@ -279,7 +356,8 @@ export class mainMenu extends Phaser.Scene {
       .text(
         1338,
         550,
-        "Créditos\n\n\nBarrionuevo, Valentin\n\nForzano, Tomás\n\nSuarez, Agustín",
+        this.textCredits +
+          "\n\n\nBarrionuevo, Valentin\n\nForzano, Tomás\n\nSuarez, Agustín",
         {
           fontSize: "75px",
           align: "center",
@@ -292,6 +370,7 @@ export class mainMenu extends Phaser.Scene {
   }
 
   private initCamera() {
+    this.cameras.main.fadeIn(1000);
     this.cameras.main.setBounds(2576, 0, 2560, 1080);
     this.cameras.main.setSize(this.game.scale.width, this.game.scale.height);
     this.cameras.main.setZoom(1);

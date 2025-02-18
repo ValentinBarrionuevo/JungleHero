@@ -3,7 +3,24 @@ import Phaser from "phaser";
 import { sharedInstance as events } from "./EventCenter";
 import { Player } from "../classes/player";
 
+import firebase from "firebase/compat/app";
+import "firebase/compat/database";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyARSNAWgFK3Q_bDapfLbMRfeNrQ0VqvvZ8",
+  authDomain: "junglehero-bd085.firebaseapp.com",
+  databaseURL: "https://junglehero-bd085-default-rtdb.firebaseio.com/",
+  projectId: "junglehero-bd085",
+  storageBucket: "junglehero-bd085.appspot.com",
+  messagingSenderId: "692131404389",
+  appId: "1:692131404389:web:a3334116cd929118cf048c",
+};
+
 export class Level extends Phaser.Scene {
+  private idData;
+  private numberId;
+  private textId;
+  private db;
   private player!: Player;
   private tileset;
   private groundLayer;
@@ -74,6 +91,7 @@ export class Level extends Phaser.Scene {
     this.initPlayer();
     this.initGrass();
     this.initCamera();
+    this.initNumberId();
 
     this.physics.add.collider(this.player, this.groundLayer);
     this.physics.add.collider(this.player, this.stone);
@@ -175,9 +193,16 @@ export class Level extends Phaser.Scene {
 
     // Overlap Finish
     this.physics.add.overlap(this.player, this.finishLine, () => {
-      this.scene.stop();
-      this.scene.stop("ui-scene");
-      this.scene.start("finalScene");
+      this.cameras.main.fadeOut(1000);
+      this.physics.pause();
+      this.scene.scene.time.addEvent({
+        delay: 1000,
+        callback: () => {
+          this.scene.stop();
+          this.scene.stop("ui-scene");
+          this.scene.start("finalScene");
+        },
+      });
     });
 
     // Overlap hudJump
@@ -192,6 +217,29 @@ export class Level extends Phaser.Scene {
   update() {
     this.player.update(1);
     this.cameraUpdate();
+    this.uiUpdate();
+  }
+
+  private initNumberId() {
+    firebase.initializeApp(firebaseConfig);
+    this.db = firebase.database();
+    this.numberId = Phaser.Math.Between(1000, 9999).toString();
+    this.idData = { userId: this.numberId };
+
+    console.log(this.idData);
+
+    var ref = this.db.ref("users");
+    ref.push(this.idData);
+
+    this.textId = this.add.text(
+      this.player.x,
+      this.player.y,
+      "ID " + this.numberId,
+      {
+        fontSize: "25px",
+        fontFamily: "font1",
+      }
+    );
   }
 
   private initMap() {
@@ -357,6 +405,7 @@ export class Level extends Phaser.Scene {
             .staticImage(x, y, "black")
             .setScale(6, 1)
             .setOrigin(0)
+            .setAlpha(0.001)
             .refreshBody();
           break;
         }
@@ -369,7 +418,10 @@ export class Level extends Phaser.Scene {
       const { x = 0, y = 0, name } = objData;
       switch (name) {
         case "Key": {
-          this.key = this.physics.add.staticImage(x, y, "key").setOrigin(0);
+          this.key = this.physics.add
+            .staticImage(x, y, "key")
+            .setOrigin(0)
+            .refreshBody();
           break;
         }
         case "babyCarpincho": {
@@ -594,5 +646,15 @@ export class Level extends Phaser.Scene {
 
     this.bottomBackground.setTilePosition(this.cameras.main.scrollX * 0.2);
     this.topBackground.setTilePosition(this.cameras.main.scrollX * 0.2);
+  }
+
+  private uiUpdate() {
+    if (this.player.x < 200 && this.player.y < 1880) {
+      events.emit("uiInvisible");
+    } else {
+      events.emit("uiVisible");
+    }
+    this.textId.x = this.player.x - 40;
+    this.textId.y = this.player.y + 100;
   }
 }

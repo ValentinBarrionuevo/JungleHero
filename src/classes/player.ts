@@ -31,7 +31,6 @@ export class Player extends Actor {
   constructor(scene: Scene, x: number, y: number) {
     super(scene, x, y, "monkey");
 
-    // KEYS
     this.keyW = this.scene.input.keyboard.addKey("UP");
     this.keyA = this.scene.input.keyboard.addKey("LEFT");
     this.keyD = this.scene.input.keyboard.addKey("RIGHT");
@@ -58,7 +57,6 @@ export class Player extends Actor {
       .addState("run", {
         onEnter: this.runOnEnter,
         onUpdate: this.runOnUpdate,
-        onExit: this.runOnExit,
       })
       .addState("jump", {
         onEnter: this.jumpOnEnter,
@@ -67,7 +65,6 @@ export class Player extends Actor {
       .addState("stealth", {
         onEnter: this.stealthOnEnter,
         onUpdate: this.stealthOnUpdate,
-        onExit: this.stealthOnExit,
       })
       .addState("highJump", {
         onEnter: this.highJumpOnEnter,
@@ -112,24 +109,26 @@ export class Player extends Actor {
   private idleOnUpdate() {
     if (this.keyX?.isDown && this.canPressX == true) {
       if (this.stealth == true) {
+        events.emit("noisy");
         this.stealth = false;
         this.canPressX = false;
-
         this.scene.time.addEvent({
-          delay: 1000, // ms
+          delay: 1000, 
           callback: () => (this.canPressX = true),
         });
       } else {
+        events.emit("stealth");
         this.stealth = true;
         this.canPressX = false;
         this.scene.time.addEvent({
-          delay: 1000, // ms
+          delay: 1000, 
           callback: () => (this.canPressX = true),
         });
       }
     }
 
     if (this.keyC?.isDown && this.body.blocked.down && this.canguro == true) {
+      events.emit("noisy");
       this.stateMachine.setState("highJump");
     }
 
@@ -142,13 +141,13 @@ export class Player extends Actor {
     }
 
     if (this.keyW?.isDown && this.body.blocked.down && this.jumpLock == false) {
+      events.emit("noisy");
       this.stateMachine.setState("jump");
     }
   }
 
   private stealthOnEnter() {
     this.anims.play("monkeyWalk");
-    events.emit("stealth");
   }
 
   private stealthOnUpdate() {
@@ -166,20 +165,18 @@ export class Player extends Actor {
     if (this.keyX?.isDown && this.canPressX) {
       this.canPressX = false;
       this.stealth = false;
+      events.emit("noisy");
       this.stateMachine.setState("idle");
       this.scene.time.addEvent({
-        delay: 1000, // ms
+        delay: 1000, 
         callback: () => (this.canPressX = true),
       });
     }
 
-    if (this.keyW?.isDown && this.body.blocked.down) {
+    if (this.keyW?.isDown && this.body.blocked.down && this.jumpLock == false) {
+      events.emit("noisy");
       this.stateMachine.setState("jump");
     }
-  }
-
-  private stealthOnExit() {
-    events.emit("noisy");
   }
 
   private jumpOnEnter() {
@@ -187,7 +184,7 @@ export class Player extends Actor {
     this.body.velocity.y = -550;
     this.stealth = false;
     this.timer = this.scene.time.addEvent({
-      delay: 300, // ms
+      delay: 300, 
       callback: () => (this.canPressW = true),
     });
   }
@@ -266,20 +263,16 @@ export class Player extends Actor {
       this.stealth = true;
       this.canPressX = false;
       this.scene.time.addEvent({
-        delay: 1000, // ms
+        delay: 1000, 
         callback: () => (this.canPressX = true),
       });
+      events.emit("stealth");
       this.stateMachine.setState("idle");
     }
 
     if (this.keyW?.isDown && this.body.blocked.down && this.jumpLock == false) {
       this.stateMachine.setState("jump");
     }
-  }
-
-  private runOnExit() {
-    //this.anims.play('idle')
-    // this.anims.stop();
   }
 
   private felinoOnEnter() {
@@ -380,7 +373,7 @@ export class Player extends Actor {
         this.jumpLock = false;
         this.scene.scene.run("chatCarpincho");
         this.scene.time.addEvent({
-          delay: 10,
+          delay: 50,
           callback: () => {
             events.emit("chat1");
             this.object = "nada";
@@ -392,7 +385,7 @@ export class Player extends Actor {
       case "carpi2":
         this.scene.scene.run("chatCarpincho");
         this.scene.time.addEvent({
-          delay: 10,
+          delay: 50,
           callback: () => {
             events.emit("chat2");
             this.object = "nada";
@@ -404,7 +397,7 @@ export class Player extends Actor {
       case "carpi3":
         this.scene.scene.run("chatCarpincho");
         this.scene.time.addEvent({
-          delay: 10,
+          delay: 50,
           callback: () => {
             events.emit("chat3");
             this.object = "nada";

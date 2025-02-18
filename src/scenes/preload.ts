@@ -6,7 +6,6 @@ export class preload extends Phaser.Scene {
   }
 
   preload() {
-    // MAP LOADING
     this.load.image("monkey", "sprites/monkey.png");
     this.load.spritesheet("monkeyIdle", "spritesheets/monkeyIdle.png", {
       frameWidth: 128,
@@ -92,19 +91,19 @@ export class preload extends Phaser.Scene {
 
   create() {
     this.add
-      .text(1138, 1160, "Cargando...", {
+      .text(1138, 1060, "Loading...", {
         fontSize: "50px",
         align: "center",
         fontFamily: "font1",
+        color: "white",
       })
       .setOrigin(0.5)
-      .setDepth(1)
-      .setAlpha(0.001)
-      .setTint(0xffffff);
+      .setDepth(1);
     this.scene.scene.time.addEvent({
-      delay: 100,
+      delay: 1000,
       callback: () => {
-        this.scene.start("changeLang");
+        this.scene.start("sceneIdioma");
+        this.scene.run("langEmit");
       },
     });
   }

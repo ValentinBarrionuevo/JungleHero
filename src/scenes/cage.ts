@@ -216,20 +216,30 @@ export class cage extends Phaser.Scene {
     });
   }
   private finish() {
-    switch (this.mapID) {
-      case 1:
-        events.emit("bird");
-        break;
-      case 2:
-        events.emit("canguro");
-        break;
-      case 3:
-        events.emit("oso");
-        break;
-    }
-    this.cageCursor.destroy();
-    this.scene.stop("cageLevel");
-    this.scene.resume("level-1-scene");
-    this.scene.resume("ui-scene");
+    this.scene.run("alertScene");
+    this.scene.scene.time.addEvent({
+      delay: 100,
+      callback: () => {
+        switch (this.mapID) {
+          case 1:
+            events.emit("bird");
+            break;
+          case 2:
+            events.emit("canguro");
+            break;
+          case 3:
+            events.emit("oso");
+            break;
+        }
+      },
+    });
+
+    this.time.addEvent({
+      delay: 100,
+      callback: () => {
+        this.cageCursor.destroy();
+        this.scene.stop("cageLevel");
+      },
+    });
   }
 }

@@ -8,13 +8,12 @@ import { mainMenu } from "./scenes/mainMenu";
 import { pausaScene } from "./scenes/pausaScene";
 import { helpScene } from "./scenes/helpScene";
 import { finalScene } from "./scenes/finalScene";
-import { changeLang } from "./scenes/changeLang";
-
-localStorage.clear();
+import { sceneIdioma } from "./scenes/lang";
+import { langEmit } from "./scenes/langEmit";
+import { alertScene } from "./scenes/alertScene";
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  backgroundColor: "#351f1b",
   scale: {
     mode: Phaser.Scale.ScaleModes.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -29,6 +28,8 @@ const config: Phaser.Types.Core.GameConfig = {
   },
   scene: [
     preload,
+    sceneIdioma,
+    langEmit,
     mainMenu,
     Level,
     chatCarpincho,
@@ -37,7 +38,7 @@ const config: Phaser.Types.Core.GameConfig = {
     pausaScene,
     helpScene,
     finalScene,
-    changeLang,
+    alertScene,
   ],
 };
 

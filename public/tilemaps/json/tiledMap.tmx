@@ -608,7 +608,7 @@
 </data>
  </layer>
  <objectgroup id="2" name="objectLayer">
-  <object id="1" name="Player" x="128" y="1536" width="64" height="64"/>
+  <object id="1" name="Player" x="134" y="1544" width="64" height="64"/>
   <object id="3" name="Cage2" x="8640" y="1408" width="256" height="256"/>
   <object id="4" name="Nada" x="8576" y="1536" width="64" height="64"/>
   <object id="7" name="Cage" x="2240" y="1984" width="256" height="256"/>
@@ -705,7 +705,7 @@
   <object id="85" name="Stealth" x="12607.7" y="70.6667" width="64" height="64"/>
   <object id="138" name="Stealth" x="13566" y="72.6666" width="64" height="64"/>
   <object id="74" name="Stealth" x="15936" y="942.667" width="64" height="64"/>
-  <object id="13" name="Key" x="2715.64" y="828.97" width="64" height="64"/>
+  <object id="13" name="Key" x="2706.55" y="828.97" width="64" height="64"/>
   <object id="14" name="babyCarpincho3" x="8000" y="320" width="64" height="64"/>
   <object id="17" name="Cage3" x="11968" y="768" width="256" height="256"/>
   <object id="18" name="babyCarpincho5" x="13248" y="256" width="64" height="64"/>

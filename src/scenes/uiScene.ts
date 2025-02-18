@@ -8,6 +8,7 @@ export class UIScene extends Scene {
   private keyState;
   private object;
   private hudZ;
+  private carpinchoHud;
 
   private buttonLeft;
   private buttonRight;
@@ -41,7 +42,7 @@ export class UIScene extends Scene {
       .image(96, 192, "monkeyNormal")
       .setOrigin(0.5, 1);
 
-    this.add.image(2050, 120, "babyCarpinchoHUD");
+    this.carpinchoHud = this.add.image(2050, 120, "babyCarpinchoHUD");
 
     this.jumpBar = this.add.image(1138, 120, "jumpBar").setAlpha(0.001);
 
@@ -63,6 +64,12 @@ export class UIScene extends Scene {
       .setAlpha(0.001);
 
     this.hudZ = this.add.image(0, 0, "botonZ").setOrigin(0).setAlpha(0);
+
+    if (!this.sys.game.device.os.desktop) {
+      this.playerState.setScale(1.2);
+      this.carpinchoHud.setScale(1.2);
+      this.carpinchoHud.x -= 10;
+    }
   }
 
   private initText() {
@@ -179,12 +186,18 @@ export class UIScene extends Scene {
         this.buttonUp.setAlpha(1);
       }
     });
+
+    events.on("uiInvisible", () => {
+      this.playerState.setAlpha(0.5);
+    });
+    events.on("uiVisible", () => {
+      this.playerState.setAlpha(1);
+    });
   }
 
   private babyCountEvent() {
     this.babyCount += 1;
     this.babyText.setText(this.babyCount + "/7");
-    console.log(this.babyCount);
   }
 
   private mobileButtons() {

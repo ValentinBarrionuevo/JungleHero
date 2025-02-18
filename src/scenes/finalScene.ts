@@ -1,7 +1,11 @@
 import Phaser from "phaser";
-import { getPhrase } from "../services/translations";
+import { sharedInstance as events } from "./EventCenter";
 
 export class finalScene extends Phaser.Scene {
+  private textFelic: string = "Texto de felicitar";
+  private textLib: string = "Texto de liberar";
+  private lang;
+
   private volver: any;
   private map;
   private groundLayer;
@@ -9,8 +13,49 @@ export class finalScene extends Phaser.Scene {
     super("finalScene");
   }
   create() {
-    this.initBackground();
+    this.cameras.main.fadeIn(1400);
+    this.initListeners();
+    this.time.addEvent({
+      delay: 100,
+      callback: () => {
+        this.initBackground();
+        this.initText();
+      },
+    });
+  }
+
+  private initText() {
+    switch (this.lang) {
+      case "es":
+        this.textFelic = "¡Felicidades!";
+        this.textLib = "Liberaste a todos los animales.";
+        break;
+      case "en":
+        this.textFelic = "Congratulations!!";
+        this.textLib = "You rescued all animals.";
+        break;
+      case "pt":
+        this.textFelic = "Parabéns!";
+        this.textLib = "Você salvou todos os animais.";
+        break;
+    }
     this.initButtons();
+  }
+
+  private initListeners() {
+    events.on("langEs", this.langSelectedEs, this);
+    events.on("langEn", this.langSelectedEn, this);
+    events.on("langPt", this.langSelectedPt, this);
+  }
+
+  private langSelectedEs() {
+    this.lang = "es";
+  }
+  private langSelectedEn() {
+    this.lang = "en";
+  }
+  private langSelectedPt() {
+    this.lang = "pt";
   }
 
   private initButtons() {
@@ -31,7 +76,7 @@ export class finalScene extends Phaser.Scene {
     });
 
     this.add
-      .text(1138, 300, getPhrase("¡Felicidades!"), {
+      .text(1138, 300, this.textFelic, {
         fontSize: "75px",
         fontFamily: "font1",
       })
@@ -40,7 +85,7 @@ export class finalScene extends Phaser.Scene {
       .setTint(0xdcde9f);
 
     this.add
-      .text(1138, 450, getPhrase("Liberaste a todos los animales."), {
+      .text(1138, 450, this.textLib, {
         fontSize: "55px",
         fontFamily: "font1",
       })
@@ -75,7 +120,7 @@ export class finalScene extends Phaser.Scene {
     this.add.image(200, 915, "babyCarpincho").setScale(0.7);
     this.add.image(500, 862, "oso").setFlipX(true);
     this.add.image(1110, 900, "monkey").setFlipX(true);
-    this.add.image(1750, 862, "canguro");
-    this.add.image(1950, 862, "bird");
+    this.add.image(1850, 862, "canguro");
+    this.add.image(2050, 862, "bird");
   }
 }
